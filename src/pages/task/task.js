@@ -1,10 +1,11 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {changeSort, changeSortField, requestTask} from "../../redux/reducers/task-reducer";
-import {getIsFetching} from "../../redux/selectors/task-selectors";
+import {changeRow, changeSort, changeSortField, requestTask} from "../../redux/reducers/task-reducer";
+import {getIsFetching, getRow, getSortField, getSortType} from "../../redux/selectors/task-selectors";
 import Table from "./table";
 import Preloader from "../../components/preloader/preloader";
 import _ from 'lodash'
+import DetailRowView from "./detailRowView";
 
 class Task extends React.Component {
     componentDidMount() {
@@ -20,11 +21,18 @@ class Task extends React.Component {
         this.props.changeSortField(sortField)
     }
 
+    onRowSelect = (row) => {
+this.props.changeRow(row)
+    }
+
+
+
     render() {
         return (
             <div>
                 {this.props.isFetching ? <Preloader/> : null}
-                <Table data={this.props.task} onSort={this.onSort} sortType={this.props.sortType} sortField={this.props.sortField}/>
+                <Table data={this.props.task} onSort={this.onSort} sortType={this.props.sortType} sortField={this.props.sortField} onRowSelect={this.onRowSelect}/>
+                {this.props.row ? <DetailRowView person={this.props.row}/> : null}
             </div>
         )
     }
@@ -39,10 +47,11 @@ let mapStateToProps = (state) => {
         {
             task: sortBy(state.task.task, state.task.sortField, state.task.sortType),
             isFetching: getIsFetching(state),
-            sortType: state.task.sortType,
-            sortField: state.task.sortField
+            sortType: getSortType(state),
+            sortField: getSortField(state),
+            row: getRow(state)
         }
     )
 }
 
-export default connect(mapStateToProps, {requestTask, getIsFetching, changeSortField, changeSort})(Task);
+export default connect(mapStateToProps, {requestTask, getIsFetching, changeSortField, changeSort, changeRow})(Task);

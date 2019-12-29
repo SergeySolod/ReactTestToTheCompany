@@ -6,7 +6,7 @@ const Home = () => {
             <div className="container">
                 <h1 className="display-4">Тестовое задание</h1>
                 <p className="lead">
-                    Здесь будет описание и тестовое задание
+                    Тестовое задание
                 </p>
             </div>
         </div>
