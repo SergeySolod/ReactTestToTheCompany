@@ -1,17 +1,19 @@
 import {taskAPI} from '../../api/Api';
 
 const SET_TASKS = 'ReactTestToTheCompany/task-reducer/SET_TASKS';
-const TOGGLE_IS_FETCHING = 'ReactTestToTheCompany/task-reducer/TOGGLE_IS_FETCHING';
 const CHANGE_SORT = 'ReactTestToTheCompany/task-reducer/CHANGE_SORT';
 const CHANGE_SORT_FIELD = 'ReactTestToTheCompany/task-reducer/CHANGE_SORT_FIELD';
 const CHANGE_ROW = 'ReactTestToTheCompany/task-reducer/CHANGE_ROW';
+const CHANGE_IS_MODE_SELECTED = 'ReactTestToTheCompany/task-reducer/CHANGE_IS_MODE_SELECTED';
+const CHANGE_CURRENT_PAGE = 'ReactTestToTheCompany/task-reducer/CHANGE_CURRENT_PAGE';
 
 let initialState = {
-    task: [],
-    isFetching: true,
+    task: null,
+    isModeSelected: false,
     sortType: 'asc',
     sortField: 'id',
-    row: null
+    row: null,
+    currentPage: 0
 }
 
 const reducerTask = (state = initialState, action) => {
@@ -28,25 +30,27 @@ const reducerTask = (state = initialState, action) => {
         case CHANGE_SORT_FIELD: {
             return {...state, sortField: action.sortField}
         }
-        case TOGGLE_IS_FETCHING: {
-            return {...state, isFetching: action.isFetching}
+        case CHANGE_IS_MODE_SELECTED: {
+            return {...state, isModeSelected: action.isModeSelected}
+        }
+        case CHANGE_CURRENT_PAGE: {
+            return {...state, currentPage: action.currentPage}
         }
         default:
             return state;
     }
 }
 
+export const changeCurrentPage = (currentPage) => ({type: CHANGE_CURRENT_PAGE, currentPage});
 export const changeSort = (sortType) => ({type: CHANGE_SORT, sortType});
+export const changeIsModeSelected = (isModeSelected) => ({type: CHANGE_IS_MODE_SELECTED, isModeSelected});
 export const changeSortField = (sortField) => ({type: CHANGE_SORT_FIELD, sortField});
 export const changeRow = (row) => ({type: CHANGE_ROW, row});
 const setTask = (task) => ({type: SET_TASKS, task});
-const toggleIsFetching = (isFetching) => ({type: TOGGLE_IS_FETCHING, isFetching});
 
-export const requestTask = () => {
+export const requestTask = (quantity) => {
     return async (dispatch) => {
-        dispatch(toggleIsFetching(true));
-        let data = await taskAPI.smallTask();
-        dispatch(toggleIsFetching(false));
+        let data = await taskAPI.smallTask(quantity);
         dispatch(setTask(data));
 
     }

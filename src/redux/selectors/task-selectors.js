@@ -1,7 +1,3 @@
-export const getIsFetching = (state) => {
-    return state.task.isFetching
-}
-
 export const getSortType = (state) => {
     return state.task.sortType
 }
@@ -12,4 +8,12 @@ export const getSortField = (state) => {
 
 export const getRow = (state) => {
     return state.task.row
+}
+
+export const getIsModeSelected = (state) => {
+    return state.task.isModeSelected
+}
+
+export const getCurrentPage = (state) => {
+    return state.task.currentPage
 }
