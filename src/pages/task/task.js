@@ -1,16 +1,33 @@
 import React from 'react'
+import {connect} from 'react-redux'
+import {requestTask} from "../../redux/reducers/task-reducer";
+import {getTask, getIsFetching} from "../../redux/selectors/task-selectors";
+import Table from "./table";
+import Preloader from "../../components/preloader/preloader";
 
-const Home = () => {
-    return (
-        <div className="jumbotron">
-            <div className="container">
-                <h1 className="display-4">Решение</h1>
-                <p className="lead">
-                    Здесь будет решение задания
-                </p>
+class Task extends React.Component {
+    componentDidMount() {
+        this.props.requestTask();
+    }
+
+    render() {
+        return (
+            <div>
+                {this.props.isFetching ? <Preloader/> : null}
+                <Table data={this.props.task}/>
             </div>
-        </div>
+        )
+    }
+}
+
+
+let mapStateToProps = (state) => {
+    return (
+        {
+            task: getTask(state),
+            isFetching: getIsFetching(state)
+        }
     )
 }
 
-export default Home
+export default connect(mapStateToProps, {requestTask, getIsFetching})(Task);
