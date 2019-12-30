@@ -7,6 +7,8 @@ const CHANGE_ROW = 'ReactTestToTheCompany/task-reducer/CHANGE_ROW';
 const CHANGE_IS_MODE_SELECTED = 'ReactTestToTheCompany/task-reducer/CHANGE_IS_MODE_SELECTED';
 const CHANGE_CURRENT_PAGE = 'ReactTestToTheCompany/task-reducer/CHANGE_CURRENT_PAGE';
 const CHANGE_SEARCH = 'ReactTestToTheCompany/task-reducer/CHANGE_SEARCH';
+const CHANGE_ADD_ROW = 'ReactTestToTheCompany/task-reducer/CHANGE_ADD_ROW';
+const ADD_NEW_TASK = 'ReactTestToTheCompany/task-reducer/ADD_NEW_TASK';
 
 let initialState = {
     task: null,
@@ -15,7 +17,8 @@ let initialState = {
     sortField: 'id',
     search: '',
     row: null,
-    currentPage: 0
+    currentPage: 0,
+    addRow: false
 }
 
 const reducerTask = (state = initialState, action) => {
@@ -23,8 +26,23 @@ const reducerTask = (state = initialState, action) => {
         case SET_TASKS: {
             return {...state, task: action.task}
         }
+        case ADD_NEW_TASK: {
+            let newTask = {
+                id: action.newTaskInfo.id,
+                firstName: action.newTaskInfo.firstName,
+                lastName: action.newTaskInfo.lastName,
+                email: action.newTaskInfo.email,
+                phone: action.newTaskInfo.phone
+            };
+            return {
+                ...state, task: [newTask, ...state.task]
+            };
+        }
         case CHANGE_SORT: {
             return {...state, sortType: action.sortType}
+        }
+        case CHANGE_ADD_ROW: {
+            return {...state, addRow: action.addRow}
         }
         case CHANGE_SEARCH: {
             return {...state, search: action.search}
@@ -46,7 +64,9 @@ const reducerTask = (state = initialState, action) => {
     }
 }
 
+export const addNewTask = (newTaskInfo) => ({type: ADD_NEW_TASK, newTaskInfo});
 export const changeCurrentPage = (currentPage) => ({type: CHANGE_CURRENT_PAGE, currentPage});
+export const changeAddRow = (addRow) => ({type: CHANGE_ADD_ROW, addRow});
 export const changeSearch = (search) => ({type: CHANGE_SEARCH, search});
 export const changeSort = (sortType) => ({type: CHANGE_SORT, sortType});
 export const changeIsModeSelected = (isModeSelected) => ({type: CHANGE_IS_MODE_SELECTED, isModeSelected});

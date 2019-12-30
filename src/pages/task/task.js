@@ -2,6 +2,8 @@ import React from 'react'
 import {connect} from 'react-redux'
 import ReactPaginate from 'react-paginate';
 import {
+    addNewTask,
+    changeAddRow,
     changeCurrentPage,
     changeIsModeSelected,
     changeRow, changeSearch,
@@ -10,6 +12,7 @@ import {
     requestTask
 } from "../../redux/reducers/task-reducer";
 import {
+    getAddRow,
     getCurrentPage,
     getIsModeSelected,
     getRow, getSearch,
@@ -22,6 +25,7 @@ import _ from 'lodash'
 import DetailRowView from "./detailRowView";
 import ModeSelector from "./modeSelector";
 import TableSearch from "./tableSearch";
+import AddRowReduxForm from "./addRow";
 
 class Task extends React.Component {
     componentDidMount(quantity) {
@@ -88,12 +92,19 @@ class Task extends React.Component {
             return <Preloader/>
         }
 
+const onSubmit = (formData) => {
+this.props.addNewTask(formData)
+}
 
         const displayData = _.chunk(filteredData, pageSize)
             [this.props.currentPage];
         return (
-            <div className="row justify-content-md-center">
+            <div className="row justify-content-md-left">
                 <TableSearch onSearch={this.searchHandler}/>
+                {this.props.addRow && <div className="pb-3"><AddRowReduxForm onSubmit={onSubmit}/></div>}
+                {!this.props.addRow && <div className="pb-3">
+                <button onClick={() => this.props.changeAddRow(true)} className="btn btn-primary pb-2">Добавить</button>
+                </div>}
                 <Table data={displayData} onSort={this.onSort} sortType={this.props.sortType}
                        sortField={this.props.sortField} onRowSelect={this.onRowSelect}/>
                 {this.props.task.length > pageSize ?
@@ -137,7 +148,8 @@ let mapStateToProps = (state) => {
             row: getRow(state),
             isModeSelected: getIsModeSelected(state),
             currentPage: getCurrentPage(state),
-            search: getSearch(state)
+            search: getSearch(state),
+            addRow: getAddRow(state)
         }
     )
 }
@@ -149,5 +161,7 @@ export default connect(mapStateToProps, {
     changeSort,
     changeRow,
     changeIsModeSelected,
-    changeCurrentPage
+    changeCurrentPage,
+    changeAddRow,
+    addNewTask
 })(Task);

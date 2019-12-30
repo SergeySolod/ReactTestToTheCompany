@@ -21,3 +21,7 @@ export const getCurrentPage = (state) => {
 export const getSearch = (state) => {
     return state.task.search
 }
+
+export const getAddRow = (state) => {
+    return state.task.addRow
+}
