@@ -17,3 +17,7 @@ export const getIsModeSelected = (state) => {
 export const getCurrentPage = (state) => {
     return state.task.currentPage
 }
+
+export const getSearch = (state) => {
+    return state.task.search
+}

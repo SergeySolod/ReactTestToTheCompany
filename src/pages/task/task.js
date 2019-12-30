@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 import {
     changeCurrentPage,
     changeIsModeSelected,
-    changeRow,
+    changeRow, changeSearch,
     changeSort,
     changeSortField,
     requestTask
@@ -12,7 +12,7 @@ import {
 import {
     getCurrentPage,
     getIsModeSelected,
-    getRow,
+    getRow, getSearch,
     getSortField,
     getSortType
 } from "../../redux/selectors/task-selectors";
@@ -21,6 +21,7 @@ import Preloader from "../../components/preloader/preloader";
 import _ from 'lodash'
 import DetailRowView from "./detailRowView";
 import ModeSelector from "./modeSelector";
+import TableSearch from "./tableSearch";
 
 class Task extends React.Component {
     componentDidMount(quantity) {
@@ -41,35 +42,58 @@ class Task extends React.Component {
     }
 
     onSelect = (quantity) => {
-        this.componentDidMount(quantity)
-        this.props.changeIsModeSelected(true)
+        this.componentDidMount(quantity);
+        this.props.changeIsModeSelected(true);
 
     }
 
     pageChangeHandler = (page) => {
-      this.props.changeCurrentPage(page.selected)
+        this.props.changeCurrentPage(page.selected)
     }
 
-            render() {
-                             if (!this.props.isModeSelected) {
-                    return (
-                        <div className='container'>
-                            <ModeSelector onSelect={this.onSelect}/>
-                        </div>
+    searchHandler = (search) => {
+        this.props.changeSearch(search)
+        this.props.changeCurrentPage(0)
+    }
+
+    getFilteredData() {
+        if (!this.props.search) {
+            return this.props.task
+        }
+        return this.props.task.filter(item => {
+            return (
+                item['firstName'].toLowerCase().includes(this.props.search.toLowerCase()) ||
+                item['lastName'].toLowerCase().includes(this.props.search.toLowerCase()) ||
+                item['email'].toLowerCase().includes(this.props.search.toLowerCase()) ||
+                item['phone'].includes(this.props.search)
+            )
+        })
+    }
+
+    render() {
+
+        const filteredData = this.getFilteredData()
+        const pageSize = 50
+        const pageCount = Math.ceil(filteredData.length / pageSize)
+
+        if (!this.props.isModeSelected) {
+            return (
+                <div className='container'>
+                    <ModeSelector onSelect={this.onSelect}/>
+                </div>
             )
         }
 
-                if (this.props.task.length === 0) {
-                    return <Preloader/>
-                }
+        if (this.props.task.length === 0) {
+            return <Preloader/>
+        }
 
 
-
-                const pageSize = 50
-                const displayData = _.chunk(this.props.task, pageSize)
-                    [this.props.currentPage];
+        const displayData = _.chunk(filteredData, pageSize)
+            [this.props.currentPage];
         return (
             <div className="row justify-content-md-center">
+                <TableSearch onSearch={this.searchHandler}/>
                 <Table data={displayData} onSort={this.onSort} sortType={this.props.sortType}
                        sortField={this.props.sortField} onRowSelect={this.onRowSelect}/>
                 {this.props.task.length > pageSize ?
@@ -78,7 +102,7 @@ class Task extends React.Component {
                         nextLabel={'>'}
                         breakLabel={'...'}
                         breakClassName={'break-me'}
-                        pageCount={20}
+                        pageCount={pageCount}
                         marginPagesDisplayed={2}
                         pageRangeDisplayed={5}
                         onPageChange={this.pageChangeHandler}
@@ -90,8 +114,9 @@ class Task extends React.Component {
                         nextClassName='page-item'
                         previousLinkClassName='page-link'
                         nextLinkClassName='page-link'
+                        forsePage={this.props.currentPage}
                     />
-                : null
+                    : null
                 }
                 {this.props.row ? <DetailRowView person={this.props.row}/> : null}
             </div>
@@ -111,7 +136,8 @@ let mapStateToProps = (state) => {
             sortField: getSortField(state),
             row: getRow(state),
             isModeSelected: getIsModeSelected(state),
-            currentPage: getCurrentPage(state)
+            currentPage: getCurrentPage(state),
+            search: getSearch(state)
         }
     )
 }
@@ -119,6 +145,7 @@ let mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
     requestTask,
     changeSortField,
+    changeSearch,
     changeSort,
     changeRow,
     changeIsModeSelected,

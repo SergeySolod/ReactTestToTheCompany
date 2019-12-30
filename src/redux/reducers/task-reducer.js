@@ -6,12 +6,14 @@ const CHANGE_SORT_FIELD = 'ReactTestToTheCompany/task-reducer/CHANGE_SORT_FIELD'
 const CHANGE_ROW = 'ReactTestToTheCompany/task-reducer/CHANGE_ROW';
 const CHANGE_IS_MODE_SELECTED = 'ReactTestToTheCompany/task-reducer/CHANGE_IS_MODE_SELECTED';
 const CHANGE_CURRENT_PAGE = 'ReactTestToTheCompany/task-reducer/CHANGE_CURRENT_PAGE';
+const CHANGE_SEARCH = 'ReactTestToTheCompany/task-reducer/CHANGE_SEARCH';
 
 let initialState = {
     task: null,
     isModeSelected: false,
     sortType: 'asc',
     sortField: 'id',
+    search: '',
     row: null,
     currentPage: 0
 }
@@ -23,6 +25,9 @@ const reducerTask = (state = initialState, action) => {
         }
         case CHANGE_SORT: {
             return {...state, sortType: action.sortType}
+        }
+        case CHANGE_SEARCH: {
+            return {...state, search: action.search}
         }
         case CHANGE_ROW: {
             return {...state, row: action.row}
@@ -42,6 +47,7 @@ const reducerTask = (state = initialState, action) => {
 }
 
 export const changeCurrentPage = (currentPage) => ({type: CHANGE_CURRENT_PAGE, currentPage});
+export const changeSearch = (search) => ({type: CHANGE_SEARCH, search});
 export const changeSort = (sortType) => ({type: CHANGE_SORT, sortType});
 export const changeIsModeSelected = (isModeSelected) => ({type: CHANGE_IS_MODE_SELECTED, isModeSelected});
 export const changeSortField = (sortField) => ({type: CHANGE_SORT_FIELD, sortField});
